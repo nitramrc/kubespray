@@ -65,7 +65,7 @@ $shared_folders ||= {}
 $forwarded_ports ||= {}
 $subnet ||= "192.168.58"
 $subnet_ipv6 ||= "fd3c:b398:0698:0756"
-$os ||= "centos"
+$os ||= "rockylinux8"
 $network_plugin ||= "flannel"
 # Setting multi_networking to true will install Multus: https://github.com/intel/multus-cni
 $multi_networking ||= "False"
