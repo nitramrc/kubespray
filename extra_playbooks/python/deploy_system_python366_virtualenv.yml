@@ -1,0 +1,24 @@
+
+- name: install virtualenv
+  hosts: hypervisor
+  vars: 
+    ansible_user: nitram
+  roles:
+    - role: ../../roles/install-python3
+      python_version_source: 3.6.6
+      python_ver_var: 3.6
+    - name: ../../roles/python-virtualenv
+      vars:
+        virtualenv_python: /usr/local/bin/python3.6
+        virtualenv_path: /opt/dev/venv366
+        virtualenv_user: root
+        
+        virtualenv_requirements_path: "/opt/dev"
+        virtualenv_requirements:
+          - "{{ virtualenv_requirements_path }}/requirements.txt"
+  
+  handlers:
+    - name: custom virtualenv handler
+      debug:
+        msg: "virtualenv in {{ virtualenv_path }} was updated."
+      listen: virtualenv updated

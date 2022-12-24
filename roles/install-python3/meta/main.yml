@@ -1,0 +1,21 @@
+---
+galaxy_info:
+  author: Martin Horejsek
+  description: Ansible role to install Python3 from source
+  company: Trask
+  
+  license: BSD
+  min_ansible_version: 2.x
+  platforms:
+    - name: 'Debian'
+      versions:
+        - 'all'
+    - name: 'EL'
+      versions:
+        - 'all'
+  galaxy_tags:
+    - python3
+    - python
+    - debian
+dependencies:
+  - role: pkgs

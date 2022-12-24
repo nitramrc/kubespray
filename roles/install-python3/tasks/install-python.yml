@@ -1,0 +1,47 @@
+---
+- name: "Get current python{{ python_ver_var }} version"
+  shell: /usr/local/bin/python{{ python_ver_var }} --version |sed 's/^Python //'
+  register: python_version_current
+  changed_when: 'python_version_current.stdout != python_version_source'
+  check_mode: false
+
+- stat:
+    path: "/usr/local/src/Python-{{ python_version_source }}/exists"
+  register: install_exists
+
+- block:
+  - name: "Download python {{ python_version_source }} source code"
+    get_url:
+      url: https://www.python.org/ftp/python/{{ python_version_source }}/Python-{{ python_version_source }}.tgz
+      dest: /usr/local/src/Python-{{ python_version_source }}.tgz
+      mode: '0644'
+    become: true
+
+  - name: "Unpack python {{ python_version_source }} source code"
+    unarchive:
+      src: /usr/local/src/Python-{{ python_version_source }}.tgz
+      dest: /usr/local/src/
+      remote_src: yes
+    become: true
+
+  - name: "Run 'configure' target as root"
+    command: chdir=/usr/local/src/Python-{{ python_version_source }} ./configure --enable-optimizations
+    become: true
+    tags: skip_ansible_lint
+
+  - name: "Run 'make install' target as root"
+    make:
+      chdir: /usr/local/src/Python-{{ python_version_source }}
+      target: "{{ make_target }}"
+      file: /usr/local/src/Python-{{ python_version_source }}/Makefile
+    notify: python installed
+    become: true
+    tags: skip_ansible_lint
+
+  - name: "Remove python source code archive"
+    file:
+      path: /usr/local/src/Python-{{ python_version_source }}.tgz
+      state: absent
+    become: true
+  when: 
+    - ( python_version_current.stdout != python_version_source ) or ( install_exists.stat.exists|bool == false )

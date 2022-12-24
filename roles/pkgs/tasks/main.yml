@@ -1,0 +1,54 @@
+---
+# tasks file for roles/pkgs
+
+
+- name: pkgs main debian
+  import_tasks: install_debian.yml
+  become: true
+  become_method: sudo
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: pkgs main alma
+  import_tasks: install_alma.yml
+  become: true
+  become_method: sudo
+  when: ansible_distribution == 'AlmaLinux'
+
+- name: pkgs main el7
+  import_tasks: install_el7.yml
+  become: true
+  become_method: sudo
+  when: ansible_distribution == 'CentOS'
+
+- name: pip2 pkgs install
+  become: true
+  become_method: sudo
+  pip:
+    name: "{{ packages }}"
+    executable: "{{ pip2_executable }}"
+    state: present
+  vars:
+    packages: "{{ host_pip2_packages }}"
+  when: install_pip2_packages == true
+
+- name: pip3 pkgs install
+  become: true
+  become_method: sudo
+  pip:
+    name: "{{ packages }}"
+    executable: "{{ pip3_executable }}"
+    state: present
+  vars:
+    packages: "{{ host_pip3_packages }}"
+  when: install_pip3_packages == true
+
+- name: pip3 cust from source pkgs install
+  become: true
+  become_method: sudo
+  pip:
+    name: "{{ packages }}"
+    executable: "{{ pip3_cust_executable }}"
+    state: present
+  vars:
+    packages: "{{ host_pip3_cust_packages }}"
+  when: install_pip3_cust_packages == true

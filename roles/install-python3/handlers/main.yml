@@ -1,0 +1,8 @@
+---
+- name: python installed
+  file:
+    path: /usr/local/src/Python-{{ python_version_source }}/exists
+    state: touch
+    mode: 0644
+  register: python_installed
+  become: true

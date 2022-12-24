@@ -1,0 +1,23 @@
+
+- name: install virtualenv
+  hosts: hypervisor
+  vars: 
+    ansible_user: nitram
+  roles:
+
+    - name: ../../roles/python-virtualenv
+      vars:
+        virtualenv_python: /usr/bin/python3.9
+        virtualenv_command: /usr/bin/virtualenv # os dist python
+        virtualenv_path: "{{ ansible_env.HOME }}/venv39"
+        virtualenv_user: "{{ ansible_user | default(ansible_ssh_user, true) }}"
+        
+        virtualenv_requirements_path: "{{ ansible_env.HOME }}"
+        virtualenv_requirements:
+          - "{{ virtualenv_requirements_path }}/requirements.txt"
+  
+  handlers:
+    - name: custom virtualenv handler
+      debug:
+        msg: "virtualenv in {{ virtualenv_path }} was updated."
+      listen: virtualenv updated

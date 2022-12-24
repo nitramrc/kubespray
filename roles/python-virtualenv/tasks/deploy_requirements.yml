@@ -1,0 +1,33 @@
+
+- name: "mkdir virtualenv_path"
+  file:
+    path: "{{ virtualenv_path }}"
+    state: "directory"
+    owner: "{{ virtualenv_user }}"
+    group: "{{ virtualenv_user }}"
+    mode: "0755"
+
+- name: "mkdir virtualenv_requirements_path"
+  file:
+    path: "{{ virtualenv_requirements_path }}"
+    state: "directory"
+    owner: "{{ virtualenv_user }}"
+    group: "{{ virtualenv_user }}"
+    mode: "0755"
+  when: virtualenv_requirements_path != ansible_env.HOME
+
+- name: copy files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{item.mode}}"
+    owner: "{{item.owner}}"
+    group: "{{item.group}}"
+  with_items:
+    - {
+        src: "{{ role_path }}/files/requirements.txt",
+        dest: "{{ virtualenv_requirements[0] }}",
+        mode: "0644",
+        owner: "{{ virtualenv_user }}",
+        group: "{{ virtualenv_user }}",
+      }

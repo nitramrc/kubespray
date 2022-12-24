@@ -1,0 +1,3 @@
+---
+- import_tasks: install-python.yml
+- import_tasks: post-install.yml

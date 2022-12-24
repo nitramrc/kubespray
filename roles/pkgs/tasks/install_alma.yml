@@ -1,0 +1,19 @@
+---
+# tasks file for roles/pkgs
+
+
+- name: dnf install base pkgs
+  dnf:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - epel-release
+
+- name: dnf pkgs install
+  dnf:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages: "{{ host_packages }}"
+

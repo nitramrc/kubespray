@@ -1,0 +1,7 @@
+
+
+- name: uninstall_all_python_from_source
+  hosts: hypervisor
+  become: yes
+  roles:
+    - role: ../../roles/uninstall_all_python_from_source
