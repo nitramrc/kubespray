@@ -43,29 +43,17 @@ if File.exist?(CONFIG)
   require CONFIG
 end
 
-$initScript = <<SCRIPT
-set -e
-set -x
-
-sshkey="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCopJkwtulL5xF3CwSShq0kQHuGywlJ+YMTT3Poi6ct8syjGGhkF5y0dxG1Yxl1N+e5i66i3jRkbHCD5TMimAuGs679XcTZ3ro/jWkMDUWggi/sw8Mt09UTuowo8f8UHI6QN0a+BIaZChmXyCSV9YGN58Cgiv1cxXK/YJEthkZM4E5ucrJ1ui+NStLQZmUvEIZKAeHi1bkF+wMAOsD4DxL1bL9jJOf212tVWYBKwpw9gmB9vi8nQsIIgweM6eIhVT++ntQfLyxF5qgZinbkEFiWKpWYTV1PxTkM6ZmZZd965+fhTJ74vvvEGt8hFqMqyrVIVEfKzf7Pz7mMvcizKYZxI5X7zuIleunNpbo4QgOHU82JtVA3ucCL8nPlSGpneSkIIdjjalxZnMRQKQ4dviylVY0KEAMgX6JhZgevbRiQ33rDvFekdhXO+vFyq8Jrxgpi3gLvyv4MUryRn4MhFSUwuu8gWVpPM6vVnpW9e97nWZtrI9hyksQbYkSm+SiSUr8= nitram@zendeb"
-echo "${sshkey}" >> /home/vagrant/.ssh/authorized_keys
-
-yum -y update
-
-exit
-SCRIPT
-
 # Defaults for config options defined in CONFIG
 $num_instances ||= 3
 $instance_name_prefix ||= "k8s"
 $vm_gui ||= false
-$vm_memory ||= 4096
-$vm_cpus ||= 4
+$vm_memory ||= 2048
+$vm_cpus ||= 2
 $shared_folders ||= {}
 $forwarded_ports ||= {}
-$subnet ||= "192.168.58"
+$subnet ||= "172.18.8"
 $subnet_ipv6 ||= "fd3c:b398:0698:0756"
-$os ||= "centos"
+$os ||= "ubuntu1804"
 $network_plugin ||= "flannel"
 # Setting multi_networking to true will install Multus: https://github.com/intel/multus-cni
 $multi_networking ||= "False"
@@ -91,14 +79,12 @@ $ansible_verbosity ||= false
 $ansible_tags ||= ENV['VAGRANT_ANSIBLE_TAGS'] || ""
 
 $playbook ||= "cluster.yml"
-# $playbook_preinstall ||= "extra_playbooks/python/install_python3.yml"
-$playbook_preinstall ||= "extra_playbooks/preinstall.yml"
 
 host_vars = {}
 
 $box = SUPPORTED_OS[$os][:box]
 # if $inventory is not set, try to use example
-$inventory = "inventory/dev" if ! $inventory
+$inventory = "inventory/sample" if ! $inventory
 $inventory = File.absolute_path($inventory, File.dirname(__FILE__))
 
 # if $inventory has a hosts.ini file use it, otherwise copy over
@@ -257,35 +243,6 @@ Vagrant.configure("2") do |config|
         "ansible_ssh_user": SUPPORTED_OS[$os][:user]
       }
 
-      # node.vm.provision :shell, :inline => $initScript
-
-      # # preinstall
-      # if i == $num_instances
-      #   node.vm.provision "ansible" do |ansible|
-      #     ansible.playbook = $playbook_preinstall
-      #     ansible.verbose = $ansible_verbosity
-      #     $ansible_inventory_path = File.join( $inventory, "hosts.ini")
-      #     if File.exist?($ansible_inventory_path)
-      #       ansible.inventory_path = $ansible_inventory_path
-      #     end
-      #     ansible.become = true
-      #     ansible.limit = "all,localhost"
-      #     ansible.host_key_checking = false
-      #     ansible.raw_arguments = ["--forks=#{$num_instances}", "--flush-cache", "-e ansible_become_pass=vagrant"]
-      #     # ansible.raw_arguments = ["--forks=#{$num_instances}", "--flush-cache", "-e ansible_become_pass=vagrant ansible_python_interpreter='/usr/local/bin/python3.8'"]
-      #     ansible.host_vars = host_vars
-      #     if $ansible_tags != ""
-      #       ansible.tags = [$ansible_tags]
-      #     end
-      #     ansible.groups = {
-      #       "etcd" => ["#{$instance_name_prefix}-[1:#{$etcd_instances}]"],
-      #       "kube_control_plane" => ["#{$instance_name_prefix}-[1:#{$kube_master_instances}]"],
-      #       "kube_node" => ["#{$instance_name_prefix}-[1:#{$kube_node_instances}]"],
-      #       "k8s_cluster:children" => ["kube_control_plane", "kube_node"],
-      #     }
-      #   end
-      # end
-
       # Only execute the Ansible provisioner once, when all the machines are up and ready.
       # And limit the action to gathering facts, the full playbook is going to be ran by testcases_run.sh
       if i == $num_instances
@@ -300,7 +257,6 @@ Vagrant.configure("2") do |config|
           ansible.limit = "all,localhost"
           ansible.host_key_checking = false
           ansible.raw_arguments = ["--forks=#{$num_instances}", "--flush-cache", "-e ansible_become_pass=vagrant"]
-          # ansible.raw_arguments = ["--forks=#{$num_instances}", "--flush-cache", "-e ansible_become_pass=vagrant ansible_python_interpreter='/usr/local/bin/python3.8'"]
           ansible.host_vars = host_vars
           if $ansible_tags != ""
             ansible.tags = [$ansible_tags]

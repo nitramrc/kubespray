@@ -1,0 +1,22 @@
+---
+
+- name: upgrade pip{{ python_ver_var }}
+  pip:
+    name: pip
+    executable: /usr/local/bin/pip{{ python_ver_var }}
+    state: latest
+  become: true
+  when: make_target == 'install'
+
+### used dist virtualenv is better for many source
+- name: Install main pip{{ python_ver_var }} pkgs
+  pip:
+    name: "{{ packages }}"
+    executable: /usr/local/bin/pip{{ python_ver_var }}
+    state: present
+  vars:
+    packages:
+      - virtualenv
+  become: true
+  when: make_target == 'install'
+

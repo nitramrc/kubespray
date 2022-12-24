@@ -1,0 +1,47 @@
+
+# ansible_python_interpreter: "/usr/local/bin/python3.8"
+# ansible_python_interpreter: "/bin/python3.6"
+
+host_packages:                                                                                                                                                                                                     
+  # - python-pip
+  # - libselinux-python
+  
+  # - python3-pip
+  # - python3-devel
+  - libselinux-python3
+  
+  # - "@Development tools"
+  - bzip2-devel
+  - bzip2-libs
+  - gcc
+  - make
+  - openssl-devel
+  - openssl-static
+  - readline-devel
+  - readline-static
+  - sqlite-devel
+  - zlib-devel
+
+ 
+host_pip2_packages: []
+# host_pip3_packages: 
+#   - selinux
+host_pip3_packages: []
+host_pip3_cust_packages:
+  - selinux
+# host_pip3_cust_packages: []
+
+# install_pip2_packages: true
+install_pip2_packages: false
+# install_pip3_packages: true
+install_pip3_packages: false
+install_pip3_cust_packages: true
+# install_pip3_cust_packages: false
+
+
+pip_executable: pip
+pip2_executable: /bin/pip2
+pip3_executable: /bin/pip3
+pip3_cust_executable: "/usr/local/bin/pip3.8"
+
+# kube_version_min_required: v1.19.0

@@ -1,0 +1,13 @@
+- name: preinstall
+  hosts: all
+
+  pre_tasks:
+    - name: debug
+      debug:
+        msg:
+          - "ansible_python_interpreter: {{ ansible_python_interpreter }}"
+      when: ansible_python_interpreter is defined
+  
+  roles:
+    - pkgs
+    - install-python3

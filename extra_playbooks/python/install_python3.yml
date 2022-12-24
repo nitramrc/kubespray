@@ -1,0 +1,5 @@
+
+- name: install python3
+  hosts: all
+  roles:
+    - name: install-python3

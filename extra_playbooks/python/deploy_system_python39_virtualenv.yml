@@ -1,0 +1,21 @@
+
+- name: install virtualenv
+  hosts: all
+  roles:
+
+    - name: python-virtualenv
+      vars:
+        virtualenv_python: /usr/bin/python3.9
+        virtualenv_command: /usr/bin/virtualenv # os dist python
+        virtualenv_path: /opt/dev/venv39
+        virtualenv_user: root
+        
+        virtualenv_requirements_path: "/opt/dev"
+        virtualenv_requirements:
+          - "{{ virtualenv_requirements_path }}/requirements.txt"
+  
+  handlers:
+    - name: custom virtualenv handler
+      debug:
+        msg: "virtualenv in {{ virtualenv_path }} was updated."
+      listen: virtualenv updated

@@ -1,0 +1,10 @@
+---
+# python_version_source: 3.9.14
+# python_ver_var: 3.9
+python_version_source: 3.8.10
+python_ver_var: 3.8
+
+# altinstall ... only minor symlinks
+# install ... major symlinks
+make_target: altinstall 
+# make_target: install 

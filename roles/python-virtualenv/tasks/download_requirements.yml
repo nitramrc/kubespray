@@ -1,0 +1,21 @@
+
+- name: before download check md5 requirements.txt
+  stat: 
+    path: "{{ role_path }}/files/requirements.txt"
+    checksum_algorithm: md5
+  register: before
+
+- name: download requirements.txt 
+  shell: GIT_SSH_COMMAND="ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no" git archive --remote=ssh://git@{{ git_repo | defaul(omit)}} HEAD requirements.txt | tar -x -C roles/python-virtualenv/files
+  changed_when: False
+
+- name: after download check md5 requirements.txt
+  stat: 
+    path: "{{ role_path }}/files/requirements.txt"
+    checksum_algorithm: md5
+  register: after
+
+- name: IF CHANGED requirements.txt
+  debug:
+    msg: "before: {{ before.stat.checksum }} after:{{ after.stat.checksum }}"
+  changed_when: before.stat.checksum != after.stat.checksum
