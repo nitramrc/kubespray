@@ -68,10 +68,10 @@ credentials_dir: "{{ inventory_dir }}/credentials"
 
 # Choose network plugin (cilium, calico, kube-ovn, weave or flannel. Use cni for generic cni plugin)
 # Can also be set to 'cloud', which lets the cloud provider setup appropriate routing
-kube_network_plugin: calico
-# kube_network_plugin: flannel
+# kube_network_plugin: calico
+kube_network_plugin: flannel
 
-calico_iptables_backend: "NFT"
+# calico_iptables_backend: "NFT"
 
 # Setting multi_networking to true will install Multus: https://github.com/intel/multus-cni
 kube_network_plugin_multus: false
