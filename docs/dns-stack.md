@@ -56,6 +56,10 @@ Whether or not upstream DNS servers come from `upstream_dns_servers` variable or
 These are configurable in inventory in as a dictionary in the `dns_upstream_forward_extra_opts` variable.
 By default, no other option than the ones hardcoded (see `roles/kubernetes-apps/ansible/templates/coredns-config.yml.j2` and `roles/kubernetes-apps/ansible/templates/nodelocaldns-config.yml.j2`).
 
+### coredns_kubernetes_extra_opts
+
+Custom options to be added to the kubernetes coredns plugin.
+
 ### coredns_external_zones
 
 Array of optional external zones to coredns forward queries to. It's  injected into
@@ -259,7 +263,7 @@ See [dns_etchosts](#dns_etchosts-coredns) above.
 
 ### Nodelocal DNS HA
 
-Under some circumstances the single POD nodelocaldns implementation may not be able to be replaced soon enough and a cluster upgrade or a nodelocaldns upgrade can cause DNS requests to time out for short intervals. If for any reason your applications cannot tollerate this behavior you can enable a redundant nodelocal DNS pod on each node:
+Under some circumstances the single POD nodelocaldns implementation may not be able to be replaced soon enough and a cluster upgrade or a nodelocaldns upgrade can cause DNS requests to time out for short intervals. If for any reason your applications cannot tolerate this behavior you can enable a redundant nodelocal DNS pod on each node:
 
 ```yaml
 enable_nodelocaldns_secondary: true

@@ -149,7 +149,7 @@ Note: Upstart/SysV init based OS types are not supported.
   - [calico](https://github.com/projectcalico/calico) v3.24.5
   - [canal](https://github.com/projectcalico/canal) (given calico/flannel versions)
   - [cilium](https://github.com/cilium/cilium) v1.12.1
-  - [flannel](https://github.com/flannel-io/flannel) v0.19.2
+  - [flannel](https://github.com/flannel-io/flannel) v0.20.1
   - [kube-ovn](https://github.com/alauda/kube-ovn) v1.10.7
   - [kube-router](https://github.com/cloudnativelabs/kube-router) v1.5.1
   - [multus](https://github.com/intel/multus-cni) v3.8
@@ -161,7 +161,7 @@ Note: Upstart/SysV init based OS types are not supported.
   - [ingress-nginx](https://github.com/kubernetes/ingress-nginx) v1.5.1
   - [krew](https://github.com/kubernetes-sigs/krew) v0.4.3
   - [argocd](https://argoproj.github.io/) v2.5.5
-  - [helm](https://helm.sh/) v3.9.4
+  - [helm](https://helm.sh/) v3.10.3
   - [metallb](https://metallb.universe.tf/)  v0.12.1
   - [registry](https://github.com/distribution/distribution) v2.8.1
 - Storage Plugin
