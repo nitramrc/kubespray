@@ -132,7 +132,7 @@ host_vars = {}
 
 $box = SUPPORTED_OS[$os][:box]
 # if $inventory is not set, try to use example
-$inventory = "inventory/dev" if ! $inventory
+$inventory = "inventory/dev2" if ! $inventory
 $inventory = File.absolute_path($inventory, File.dirname(__FILE__))
 
 # if $inventory has a hosts.ini file use it, otherwise copy over
