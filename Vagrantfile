@@ -50,7 +50,8 @@ set -x
 sshkey="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCopJkwtulL5xF3CwSShq0kQHuGywlJ+YMTT3Poi6ct8syjGGhkF5y0dxG1Yxl1N+e5i66i3jRkbHCD5TMimAuGs679XcTZ3ro/jWkMDUWggi/sw8Mt09UTuowo8f8UHI6QN0a+BIaZChmXyCSV9YGN58Cgiv1cxXK/YJEthkZM4E5ucrJ1ui+NStLQZmUvEIZKAeHi1bkF+wMAOsD4DxL1bL9jJOf212tVWYBKwpw9gmB9vi8nQsIIgweM6eIhVT++ntQfLyxF5qgZinbkEFiWKpWYTV1PxTkM6ZmZZd965+fhTJ74vvvEGt8hFqMqyrVIVEfKzf7Pz7mMvcizKYZxI5X7zuIleunNpbo4QgOHU82JtVA3ucCL8nPlSGpneSkIIdjjalxZnMRQKQ4dviylVY0KEAMgX6JhZgevbRiQ33rDvFekdhXO+vFyq8Jrxgpi3gLvyv4MUryRn4MhFSUwuu8gWVpPM6vVnpW9e97nWZtrI9hyksQbYkSm+SiSUr8= nitram@zendeb"
 echo "${sshkey}" >> /home/vagrant/.ssh/authorized_keys
 
-yum -y update
+# yum -y update
+# systemctl disable firewalld
 
 exit
 SCRIPT
@@ -66,7 +67,7 @@ $forwarded_ports ||= {}
 $subnet ||= "192.168.58"
 $subnet_ipv6 ||= "fd3c:b398:0698:0756"
 $os ||= "rockylinux8"
-$network_plugin ||= "flannel"
+$network_plugin ||= "calico"
 # Setting multi_networking to true will install Multus: https://github.com/intel/multus-cni
 $multi_networking ||= "False"
 $download_run_once ||= "True"
@@ -232,7 +233,7 @@ Vagrant.configure("2") do |config|
       end
 
       # Disable firewalld on oraclelinux/redhat vms
-      if ["oraclelinux","oraclelinux8","rhel7","rhel8"].include? $os
+      if ["oraclelinux","oraclelinux8","rhel7","rhel8","rockylinux8"].include? $os
         node.vm.provision "shell", inline: "systemctl stop firewalld; systemctl disable firewalld"
       end
 
