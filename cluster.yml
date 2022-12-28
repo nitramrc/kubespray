@@ -1,10 +1,22 @@
 ---
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 1
 - name: Check ansible version
   import_playbook: ansible_version.yml
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 2
 - name: Ensure compatibility with old groups
   import_playbook: legacy_groups.yml
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 3
 - hosts: bastion[0]
   gather_facts: False
   environment: "{{ proxy_disable_env }}"
@@ -12,6 +24,10 @@
     - { role: kubespray-defaults }
     - { role: bastion-ssh-config, tags: ["localhost", "bastion"] }
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 4
 - hosts: k8s_cluster:etcd
   strategy: linear
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
@@ -21,10 +37,18 @@
     - { role: kubespray-defaults }
     - { role: bootstrap-os, tags: bootstrap-os}
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 5
 - name: Gather facts
   tags: always
   import_playbook: facts.yml
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 6
 - hosts: k8s_cluster:etcd
   gather_facts: False
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
@@ -35,6 +59,10 @@
     - { role: "container-engine", tags: "container-engine", when: deploy_container_engine }
     - { role: download, tags: download, when: "not skip_downloads" }
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 7
 - hosts: etcd:kube_control_plane
   gather_facts: False
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
@@ -48,6 +76,10 @@
         etcd_events_cluster_setup: "{{ etcd_events_cluster_enabled }}"
       when: etcd_deployment_type != "kubeadm"
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 8
 - hosts: k8s_cluster
   gather_facts: False
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
@@ -64,6 +96,10 @@
         - kube_network_plugin in ["calico", "flannel", "canal", "cilium"] or cilium_deploy_additionally | default(false) | bool
         - kube_network_plugin != "calico" or calico_datastore == "etcd"
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 9
 - hosts: k8s_cluster
   gather_facts: False
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
@@ -72,6 +108,10 @@
     - { role: kubespray-defaults }
     - { role: kubernetes/node, tags: node }
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 10
 - hosts: kube_control_plane
   gather_facts: False
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
@@ -82,6 +122,10 @@
     - { role: kubernetes/client, tags: client }
     - { role: kubernetes-apps/cluster_roles, tags: cluster-roles }
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 11
 - hosts: k8s_cluster
   gather_facts: False
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
@@ -92,6 +136,10 @@
     - { role: kubernetes/node-label, tags: node-label }
     - { role: network_plugin, tags: network }
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 12
 - hosts: calico_rr
   gather_facts: False
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
@@ -100,6 +148,10 @@
     - { role: kubespray-defaults }
     - { role: network_plugin/calico/rr, tags: ['network', 'calico_rr'] }
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 13
 - hosts: kube_control_plane[0]
   gather_facts: False
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
@@ -108,6 +160,10 @@
     - { role: kubespray-defaults }
     - { role: win_nodes/kubernetes_patch, tags: ["master", "win_nodes"] }
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 14
 - hosts: kube_control_plane
   gather_facts: False
   any_errors_fatal: "{{ any_errors_fatal | default(true) }}"
@@ -121,6 +177,10 @@
     - { role: kubernetes-apps/external_provisioner, tags: external-provisioner }
     - { role: kubernetes-apps, tags: apps }
 
+- name: Debug play
+  import_playbook: ansible_debug_play.yml
+  vars:
+    debug_stage: 15
 - name: Apply resolv.conf changes now that cluster DNS is up
   hosts: k8s_cluster
   gather_facts: False

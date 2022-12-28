@@ -1,0 +1,18 @@
+---
+- hosts: all
+  gather_facts: false
+  become: no
+  tags: debug
+  tasks:
+    - name: "debug stage"
+      debug:
+        msg:
+          - "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+          - "!!!!!!!!!! debug stage: {{ debug_stage }}"
+          - "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    - name: "debug vars"
+      debug:
+        msg:
+          - "{{ etcd_deployment_type }}"
+      when:
+        - etcd_deployment_type is defined
