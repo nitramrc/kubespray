@@ -267,8 +267,8 @@ Vagrant.configure("2") do |config|
 
       # Disable firewalld on oraclelinux/redhat vms
       if ["oraclelinux","oraclelinux8","rhel7","rhel8","rockylinux8"].include? $os
-        # node.vm.provision "shell", inline: "systemctl stop firewalld; systemctl disable firewalld"
-        node.vm.provision :shell, :inline => $firewalld
+        node.vm.provision "shell", inline: "systemctl stop firewalld; systemctl disable firewalld"
+        # node.vm.provision :shell, :inline => $firewalld
       end
 
       host_vars[vm_name] = {
