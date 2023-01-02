@@ -1,0 +1,12 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: rwx-test-kadalu
+spec:
+  storageClassName: kadalu.storage-pool1
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 500M

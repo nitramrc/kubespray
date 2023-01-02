@@ -200,6 +200,10 @@ Vagrant.configure("2") do |config|
         vb.linked_clone = true
         vb.customize ["modifyvm", :id, "--vram", "8"] # ubuntu defaults to 256 MB which is a waste of precious RAM
         vb.customize ["modifyvm", :id, "--audio", "none"]
+        unless File.exist?(vm_name + '.vdi')
+          vb.customize ['createhd', '--filename', vm_name + '.vdi', '--size', 20 * 1024]
+        end
+        vb.customize ['storageattach', :id,  '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', vm_name + '.vdi']
       end
 
       node.vm.provider :libvirt do |lv|

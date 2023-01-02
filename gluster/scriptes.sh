@@ -1,0 +1,1 @@
+kubectl kadalu storage-add storage-pool1 --type=Replica3 --device k8s-1:/dev/sdb --device k8s-2:/dev/sdb --device k8s-3:/dev/sdb

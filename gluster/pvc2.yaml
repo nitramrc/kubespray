@@ -1,0 +1,11 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: pv2
+spec:
+  storageClassName: kadalu.storage-pool1
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
