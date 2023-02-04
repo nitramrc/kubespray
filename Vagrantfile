@@ -204,6 +204,10 @@ Vagrant.configure("2") do |config|
           vb.customize ['createhd', '--filename', vm_name + '.vdi', '--size', 20 * 1024]
         end
         vb.customize ['storageattach', :id,  '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', vm_name + '.vdi']
+        unless File.exist?(vm_name + '-2' + '.vdi')
+          vb.customize ['createhd', '--filename', vm_name + '-2' + '.vdi', '--size', 20 * 1024]
+        end
+        vb.customize ['storageattach', :id,  '--storagectl', 'SATA Controller', '--port', 2, '--device', 0, '--type', 'hdd', '--medium', vm_name + '-2' + '.vdi']
       end
 
       node.vm.provider :libvirt do |lv|
