@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: rwx-test-gluster
+  labels:
+    app: rwx-test-gluster
+spec:
+  ports:
+    - port: 80
+  selector:
+    app: rwx-test-gluster
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rwx-test-gluster
+  labels:
+    app: rwx-test-gluster
+  namespace: default
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rwx-test-gluster
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: rwx-test-gluster
+    spec:
+      containers:
+        - image: ubuntu:xenial
+          imagePullPolicy: IfNotPresent
+          command: [ "/bin/sh", "-c" ]
+          args:
+            - sleep 10; touch /data/index.html; while true; do date >> /data/index.html; sleep 1; done;
+          name: rwx-test-gluster
+          stdin: true
+          tty: true
+          volumeMounts:
+            - mountPath: /data
+              name: rwx-test-gluster
+        - image: nginxinc/nginx-unprivileged 
+          imagePullPolicy: IfNotPresent
+          name: nginx
+          ports:
+            - containerPort: 80
+              name: http
+          volumeMounts:
+            - mountPath: /usr/share/nginx/html
+              name: rwx-test-gluster
+      restartPolicy: Always
+      volumes:
+        - name: rwx-test-gluster
+          persistentVolumeClaim:
+            claimName: gv0-claim
