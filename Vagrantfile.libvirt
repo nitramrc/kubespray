@@ -1,0 +1,104 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+
+
+
+
+##
+## Vars and scripts
+##
+
+
+
+# run only on first "vagrant up" or "vagrant up [ --provision | --provision-with ]"
+$initScript = <<SCRIPT
+set -e
+set -x
+
+sshkey="ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCopJkwtulL5xF3CwSShq0kQHuGywlJ+YMTT3Poi6ct8syjGGhkF5y0dxG1Yxl1N+e5i66i3jRkbHCD5TMimAuGs679XcTZ3ro/jWkMDUWggi/sw8Mt09UTuowo8f8UHI6QN0a+BIaZChmXyCSV9YGN58Cgiv1cxXK/YJEthkZM4E5ucrJ1ui+NStLQZmUvEIZKAeHi1bkF+wMAOsD4DxL1bL9jJOf212tVWYBKwpw9gmB9vi8nQsIIgweM6eIhVT++ntQfLyxF5qgZinbkEFiWKpWYTV1PxTkM6ZmZZd965+fhTJ74vvvEGt8hFqMqyrVIVEfKzf7Pz7mMvcizKYZxI5X7zuIleunNpbo4QgOHU82JtVA3ucCL8nPlSGpneSkIIdjjalxZnMRQKQ4dviylVY0KEAMgX6JhZgevbRiQ33rDvFekdhXO+vFyq8Jrxgpi3gLvyv4MUryRn4MhFSUwuu8gWVpPM6vVnpW9e97nWZtrI9hyksQbYkSm+SiSUr8= nitram@zendeb"
+echo "${sshkey}" >> /home/vagrant/.ssh/authorized_keys
+
+exit
+SCRIPT
+
+
+# run always with "vagrant up"
+$alwaysScript = <<SCRIPT
+set -e
+set -x
+
+# true
+ip r del default via 192.168.121.1 || true
+ip r add default via 192.168.122.1 || true
+
+exit
+SCRIPT
+
+servers=[
+  {
+    :machine => "k8s-1",
+    :ip => "192.168.122.101",
+    :box => "generic/rocky8",
+    :ram => 9000,
+    :cpu => 4,
+    :init_script => $initScript,
+    :always_script => $alwaysScript
+  },
+  {
+    :machine => "k8s-2",
+    :ip => "192.168.122.102",
+    :box => "generic/rocky8",
+    :ram => 9000,
+    :cpu => 4,
+    :init_script => $initScript,
+    :always_script => $alwaysScript
+  },
+  {
+    :machine => "k8s-3",
+    :ip => "192.168.122.103",
+    :box => "generic/rocky8",
+    :ram => 9000,
+    :cpu => 4,
+    :init_script => $initScript,
+    :always_script => $alwaysScript
+  },
+  {
+    :machine => "k8s-4",
+    :ip => "192.168.122.104",
+    :box => "generic/rocky8",
+    :ram => 9000,
+    :cpu => 4,
+    :init_script => $initScript,
+    :always_script => $alwaysScript
+  }
+]
+
+Vagrant.configure("2") do |config|
+
+  if Vagrant.has_plugin?("vagrant-vbguest") then
+    config.vbguest.auto_update = false
+  end
+  if Vagrant.has_plugin?("vagrant-timezone") then
+    config.timezone.value = "Europe/Prague"
+  end
+
+  servers.each do |machine|
+    config.vm.define machine[:machine] do |node|
+      node.vm.box = machine[:box]
+      node.vm.hostname = machine[:machine]
+      node.vm.network "public_network", ip: machine[:ip], dev: "virbr0", mode: "bridge", type: "bridge"
+      node.vm.provider "libvird" do |lv|
+        lv.memory = machine[:ram]
+        lv.cpus = machine[:cpu]
+      end
+
+      node.vm.provision :shell, :inline => machine[:init_script]
+      node.vm.provision :shell, :inline => machine[:always_script], run: "always"
+      node.vm.provision "shell", inline: "systemctl stop firewalld; systemctl disable firewalld"
+
+
+    end
+  end
+
+end
